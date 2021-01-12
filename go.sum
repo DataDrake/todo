@@ -1,0 +1,13 @@
+github.com/DataDrake/cli-ng v1.1.1-0.20210112035921-e441af61abc0 h1:DK1SDKFgsl0YU26/MTFskUowTOVXz11xTtyYEs6quig=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112035921-e441af61abc0/go.mod h1:Q8waj7L8BdRhq6DP0ZlFrqtcwkzYHotewVRcfvRuseU=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112042143-3a730008d0fb h1:yCEjkbHN8uTuPzVx3MsXtbdlZ0QowtPNz8KIAs/1OWs=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112042143-3a730008d0fb/go.mod h1:Q8waj7L8BdRhq6DP0ZlFrqtcwkzYHotewVRcfvRuseU=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112043117-fb9389a83c39 h1:gFsgOmw/eRG6iXEPnkxsM/7OWbQDyzrqV1YVrOT8QOs=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112043117-fb9389a83c39/go.mod h1:Q8waj7L8BdRhq6DP0ZlFrqtcwkzYHotewVRcfvRuseU=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112043320-4b1adbe950c6 h1:TGz3PbRJynHqVG86Wb3BhL8leUkh3r3AvQ9X52q9V80=
+github.com/DataDrake/cli-ng v1.1.1-0.20210112043320-4b1adbe950c6/go.mod h1:Q8waj7L8BdRhq6DP0ZlFrqtcwkzYHotewVRcfvRuseU=
+github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
+github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+github.com/mattn/kinako v0.0.0-20170717041458-332c0a7e205a/go.mod h1:CdTTBOYzS5E4mWS1N8NWP6AHI19MP0A2B18n3hLzRMk=
+golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+golang.org/x/tools v0.0.0-20181221235234-d00ac6d27372/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
