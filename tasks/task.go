@@ -18,6 +18,7 @@ package tasks
 
 import (
 	"fmt"
+	"github.com/DataDrake/todo/colors"
 	"io"
 	"os"
 	"strings"
@@ -71,9 +72,9 @@ func (t Task) Print(tw io.Writer) (err error) {
 	if !t.Finished.IsZero() {
 		finished = formatTime(t.Finished)
 	}
-	pColor := 44
-	lColor := 42
-	_, err = fmt.Fprintf(tw, "\033[0m%d\t%s\t%s\t\033[%dm \033[49m\t%s\t\033[%dm \033[49m\t%s\t%s\033[0m\n", t.ID, created, finished, pColor, t.Project, lColor, t.Label, t.Name)
+	pColor := colors.ProjectColor(t.Project)
+	lColor := colors.LabelColor(t.Label)
+	_, err = fmt.Fprintf(tw, "\033[0m%d\t%s\t%s\t\033[%03dm \033[49m\t%s\t\033[%03dm \033[49m\t%s\t%s\033[0m\n", t.ID, created, finished, pColor, t.Project, lColor, t.Label, t.Name)
 	return
 }
 
@@ -90,9 +91,9 @@ func parse(args []string) (t Task, ok bool) {
 	for _, piece := range args {
 		switch {
 		case strings.HasPrefix(piece, "@"):
-			t.Project = strings.TrimPrefix(piece, "@")
+			t.Project, ok = ParseProject(piece)
 		case strings.HasPrefix(piece, ":"):
-			t.Label = strings.TrimPrefix(piece, ":")
+			t.Label, ok = ParseLabel(piece)
 		default:
 			t.Name = piece
 		}
@@ -102,4 +103,29 @@ func parse(args []string) (t Task, ok bool) {
 	}
 	ok = true
 	return
+}
+
+func parsePrefixedName(token, prefix string) (name string, ok bool) {
+	if len(token) < 2 {
+		return
+	}
+	if !strings.HasPrefix(token, prefix) {
+		return
+	}
+	fmt.Sscanf(token, prefix+"%q", &name)
+	if len(name) == 0 {
+		name = strings.TrimPrefix(token, prefix)
+	}
+	ok = true
+	return
+}
+
+// ParseLabel decodes the name of a label
+func ParseLabel(token string) (string, bool) {
+	return parsePrefixedName(token, ":")
+}
+
+// ParseProject decodes the name of a project
+func ParseProject(token string) (string, bool) {
+	return parsePrefixedName(token, "@")
 }

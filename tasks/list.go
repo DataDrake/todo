@@ -111,7 +111,7 @@ func (l List) Print() bool {
 	sort.Sort(l)
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	defer tw.Flush()
-	if _, err := fmt.Fprintln(tw, "\033[1mID\tCreated\tFinished\t\033[49m \033[49m\tProject\t\033[49m \033[49m\tLabel\tName\033[0m"); err != nil {
+	if _, err := fmt.Fprintln(tw, "\033[1mID\tCreated\tFinished\t\033[049m \033[49m\tProject\t\033[049m \033[49m\tLabel\tName\033[0m"); err != nil {
 		fmt.Fprintf(os.Stderr, "Error while printing: %s\n", err)
 		return false
 	}
