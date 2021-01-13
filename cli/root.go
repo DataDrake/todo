@@ -25,3 +25,7 @@ var Root = cmd.Root{
 	Name:  "todo",
 	Short: "A simple text-based task manager, writter in Go",
 }
+
+func init() {
+    cmd.Register(&cmd.Help)
+}
