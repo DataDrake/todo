@@ -65,6 +65,6 @@ var Codes = map[string]int{
 // Print deomonstrates all of the available colors on stdout
 func Print() {
 	for _, name := range Names {
-		fmt.Printf("\033[%3dm  \033[49m %s\n", Codes[name], name)
+		fmt.Printf("\033[%dm  \033[49m %s\n", Codes[name], name)
 	}
 }
