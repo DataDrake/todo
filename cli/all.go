@@ -23,19 +23,18 @@ import (
 )
 
 func init() {
-	cmd.Register(&Report)
+	cmd.Register(&All)
 }
 
-// Report prints a list of every task, regardless of status
-var Report = cmd.Sub{
-	Name:  "report",
-	Alias: "all",
+// All prints a list of every task, regardless of status
+var All = cmd.Sub{
+	Name:  "all",
 	Short: "Print all tasks",
-	Run:   ReportRun,
+	Run:   AllRun,
 }
 
-// ReportRun carries out the "report" sub-command
-func ReportRun(r *cmd.Root, s *cmd.Sub) {
+// AllRun carries out the "report" sub-command
+func AllRun(r *cmd.Root, s *cmd.Sub) {
 	if ok := tasks.All(); !ok {
 		os.Exit(1)
 	}

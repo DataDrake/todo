@@ -100,6 +100,7 @@ func parse(args []string) (t Task, ok bool) {
 	}
 	if len(t.Name) == 0 {
 		fmt.Fprintln(os.Stderr, "Task must have a Name.")
+        return
 	}
 	ok = true
 	return

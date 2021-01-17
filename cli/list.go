@@ -23,19 +23,19 @@ import (
 )
 
 func init() {
-	cmd.Register(&TODO)
+	cmd.Register(&List)
 }
 
-// TODO prints the TODO list
-var TODO = cmd.Sub{
-	Name:  "todo",
+// List prints the TODO list
+var List = cmd.Sub{
+	Name:  "list",
 	Alias: "ls",
 	Short: "Print current TODO list",
-	Run:   TODORun,
+	Run:   ListRun,
 }
 
-// TODORun carries out the "todo" sub-command
-func TODORun(r *cmd.Root, s *cmd.Sub) {
+// ListRun carries out the "list" sub-command
+func ListRun(r *cmd.Root, s *cmd.Sub) {
 	if ok := tasks.TODO(); !ok {
 		os.Exit(1)
 	}
