@@ -27,5 +27,5 @@ var Root = cmd.Root{
 }
 
 func init() {
-    cmd.Register(&cmd.Help)
+	cmd.Register(&cmd.Help)
 }

@@ -18,47 +18,33 @@ package colors
 
 import (
 	"fmt"
+	"github.com/DataDrake/todo/store"
 	"io"
 	"os"
 	"path/filepath"
 )
 
-var (
-	labelColors   Map
-	projectColors Map
-)
+var configs map[string]Config
 
 func init() {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to get homedir, reason: %s\n", err)
-		os.Exit(1)
-	}
-	data := filepath.Join(home, ".local", "share", "todo")
-	if err = os.MkdirAll(data, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to make directory '%s', reason: %s\n", data, err)
-		os.Exit(1)
-	}
-	labels := filepath.Join(data, "labels.lst")
-	labelColors, err = load(labels)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to load color config '%s', reason: %s\n", labels, err)
-		os.Exit(1)
-	}
-	projects := filepath.Join(data, "projects.lst")
-	projectColors, err = load(projects)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to load color config '%s', reason: %s\n", projects, err)
-		os.Exit(1)
+	data := store.Path()
+	configs = make(map[string]Config)
+	for _, name := range []string{"labels", "projects"} {
+		if err := load(data, name); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to load color config '%s', reason: %s\n", name, err)
+			os.Exit(1)
+		}
 	}
 }
 
-func load(path string) (m Map, err error) {
-	m = make(Map)
+func load(data, name string) (err error) {
+	path := filepath.Join(data, name+".lst")
+	c := make(Config)
 	f, err := os.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			err = nil
+			configs[name] = c
 			return
 		}
 		return
@@ -69,42 +55,37 @@ func load(path string) (m Map, err error) {
 		if err != nil {
 			break
 		}
-		m[name] = color
+		c[name] = color
 	}
 	if err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
 		err = fmt.Errorf("failed to read color, reason: %s", err)
 		return
 	}
+	configs[name] = c
 	return
 }
 
 func saveAll() error {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get homedir, reason: %s", err)
-	}
-	data := filepath.Join(home, ".local", "share", "todo")
-	labels := filepath.Join(data, "labels.lst")
-	if err := labelColors.save(labels); err != nil {
-		return fmt.Errorf("failed to save color config '%s', reason: %s", labels, err)
-	}
-	projects := filepath.Join(data, "projects.lst")
-	if err := projectColors.save(projects); err != nil {
-		return fmt.Errorf("failed to save color config '%s', reason: %s", projects, err)
+	data := store.Path()
+	for name, config := range configs {
+		if err := config.save(data, name); err != nil {
+			return fmt.Errorf("failed to save color config '%s', reason: %s", name, err)
+		}
 	}
 	return nil
 }
 
-// Map created associations between strings and color names
-type Map map[string]string
+// Config created associations between strings and color names
+type Config map[string]string
 
-func (m Map) save(path string) error {
+func (c Config) save(data, name string) error {
+	path := filepath.Join(data, name+".lst")
 	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	for name, color := range m {
+	for name, color := range c {
 		if err := write(f, name, color); err != nil {
 			return err
 		}
@@ -112,19 +93,13 @@ func (m Map) save(path string) error {
 	return nil
 }
 
-// LabelColor gets the color code for a label
-func LabelColor(name string) (code int) {
-	color, ok := labelColors[name]
-	if !ok {
-		color = "None"
+// Color gets the color code from a color config
+func Color(config, name string) (code int) {
+	m, ok := configs[config]
+	var color string
+	if ok {
+		color, ok = m[name]
 	}
-	code = Codes[color]
-	return
-}
-
-// ProjectColor gets the color code for a project
-func ProjectColor(name string) (code int) {
-	color, ok := projectColors[name]
 	if !ok {
 		color = "None"
 	}

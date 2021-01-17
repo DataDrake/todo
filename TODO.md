@@ -6,5 +6,6 @@
 - [ ] Filter list output by Task Specification (Project and/or Label)
 - [ ] Move a task from Completed back to the Backlog
 - [ ] Change Project and/or Label of existing Task
+- [ ] Add Flag for longer timestamps
 - [ ] Interactive Mode (SPOILERS)
     - [ ] fsnotify

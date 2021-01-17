@@ -46,13 +46,13 @@ type ColorArgs struct {
 func ColorRun(r *cmd.Root, s *cmd.Sub) {
 	args := s.Args.(*ColorArgs)
 	if name, ok := tasks.ParseProject(args.Spec); ok {
-		if ok := colors.SetProject(name, args.Name); !ok {
+		if ok := colors.Set("projects", name, args.Name); !ok {
 			os.Exit(1)
 		}
 		return
 	}
 	if name, ok := tasks.ParseLabel(args.Spec); ok {
-		if ok := colors.SetLabel(name, args.Name); !ok {
+		if ok := colors.Set("labels", name, args.Name); !ok {
 			os.Exit(1)
 		}
 		return

@@ -14,32 +14,29 @@
 // limitations under the License.
 //
 
-package colors
+package cli
 
 import (
 	"fmt"
+	"github.com/DataDrake/cli-ng/cmd"
 	"os"
 )
 
-// Set sets the color in a config
-func Set(config, name, color string) bool {
-	if _, ok := Codes[color]; !ok {
-		fmt.Fprintf(os.Stderr, "Color '%s' does not exist.\n", color)
-		return false
-	}
-	if color == "None" {
-		delete(configs[config], name)
-	} else {
-		configs[config][name] = color
-	}
-	return Save()
+func init() {
+	cmd.Register(&Init)
 }
 
-// Save writes out color configs to disk
-func Save() bool {
-	if err := saveAll(); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to save colors, reason: %s\n", err)
-		return false
+// Init a new task
+var Init = cmd.Sub{
+	Name:  "init",
+	Short: "Create todo list in the current directory",
+	Run:   InitRun,
+}
+
+// InitRun carries out the "init" sub-command
+func InitRun(r *cmd.Root, s *cmd.Sub) {
+	if err := os.Mkdir(".todo", 0755); err != nil {
+		fmt.Printf("Failed to create directory, '.todo', reason: %s\n", err)
+		os.Exit(1)
 	}
-	return true
 }

@@ -19,7 +19,6 @@ package tasks
 import (
 	"fmt"
 	"os"
-	"time"
 )
 
 // Add creates a new Task and places it in the backlog
@@ -28,105 +27,75 @@ func Add(args []string) (ok bool) {
 	if t, ok = parse(args); !ok {
 		return
 	}
-	t.ID = nextID()
-	t.Created = time.Now()
-	backlog = append(backlog, t)
-	if ok = saveAll(); !ok {
-		return
+	var id int
+	if id, ok = lists.Add(t); ok {
+		fmt.Printf("Task %d created.\n", id)
 	}
-	fmt.Printf("Task %d created.\n", t.ID)
 	return
 }
 
 // Claim moves a task from the backlog to the TODO list
-func Claim(id int) bool {
-	if l, t, ok := backlog.remove(id); ok {
-		backlog = l
-		todo = append(todo, t)
-		return saveAll()
+func Claim(id int) (ok bool) {
+	if ok = lists.Claim(id); !ok {
+		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
-	fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
-	return false
+	return
 }
 
 // Done marks a task as completed
-func Done(id int) bool {
-	if l, t, ok := todo.remove(id); ok {
-		todo = l
-		t.Finished = time.Now()
-		completed = append(completed, t)
-		return saveAll()
+func Done(id int) (ok bool) {
+	if ok = lists.Done(id); !ok {
+		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
-	if l, t, ok := backlog.remove(id); ok {
-		backlog = l
-		t.Finished = time.Now()
-		completed = append(completed, t)
-		return saveAll()
-	}
-	fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
-	return false
+	return
 }
 
 // Remove deletes a task entirely
-func Remove(id int) bool {
-	if l, _, ok := todo.remove(id); ok {
-		todo = l
-		return saveAll()
+func Remove(id int) (ok bool) {
+	if ok = lists.Remove(id); !ok {
+		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
-	if l, _, ok := backlog.remove(id); ok {
-		backlog = l
-		return saveAll()
-	}
-	if l, _, ok := completed.remove(id); ok {
-		completed = l
-		return saveAll()
-	}
-	fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
-	return false
+	return
 }
 
 // Return moves a task from the TODO list back to the Backlog
-func Return(id int) bool {
-	if l, t, ok := todo.remove(id); ok {
-		todo = l
-		backlog = append(backlog, t)
-		return saveAll()
+func Return(id int) (ok bool) {
+	if ok = lists.Return(id); !ok {
+		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
-	fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
-	return false
+	return
 }
 
 // TODO prints the TODO list
 func TODO() bool {
-	return todo.Print()
+	return lists["todo"].Print()
 }
 
 // Backlog prints the Backlog
 func Backlog() bool {
-	return backlog.Print()
+	return lists["backlog"].Print()
 }
 
 // Completed prints the Completed tasks
 func Completed() bool {
-	return completed.Print()
+	return lists["completed"].Print()
 }
 
 // All prints every tracked task
 func All() (ok bool) {
-	if ok = todo.Print(); !ok {
+	if ok = TODO(); !ok {
 		return
 	}
 	fmt.Printf("\nBacklog:\n\n")
-	if ok = backlog.Print(); !ok {
+	if ok = Backlog(); !ok {
 		return
 	}
 	fmt.Printf("\nCompleted:\n\n")
-	ok = completed.Print()
+	ok = Completed()
 	return
 }
 
 // ResetCompleted permanently deletes all completed tasks
 func ResetCompleted() bool {
-	completed = make(List, 0)
-	return saveAll()
+	return lists.Reset("completed")
 }

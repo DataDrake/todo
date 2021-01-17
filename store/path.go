@@ -14,32 +14,34 @@
 // limitations under the License.
 //
 
-package colors
+package store
 
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
-// Set sets the color in a config
-func Set(config, name, color string) bool {
-	if _, ok := Codes[color]; !ok {
-		fmt.Fprintf(os.Stderr, "Color '%s' does not exist.\n", color)
-		return false
-	}
-	if color == "None" {
-		delete(configs[config], name)
-	} else {
-		configs[config][name] = color
-	}
-	return Save()
-}
+var path string
 
-// Save writes out color configs to disk
-func Save() bool {
-	if err := saveAll(); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to save colors, reason: %s\n", err)
-		return false
+// Path returns the directory path for all of the todo data
+func Path() string {
+	if len(path) > 0 {
+		return path
 	}
-	return true
+	if _, err := os.Stat(".todo"); err == nil {
+		path = ".todo"
+		return path
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get homedir, reason: %s\n", err)
+		os.Exit(1)
+	}
+	path = filepath.Join(home, ".local", "share", "todo")
+	if err = os.MkdirAll(path, 0755); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to make directory '%s', reason: %s\n", path, err)
+		os.Exit(1)
+	}
+	return path
 }

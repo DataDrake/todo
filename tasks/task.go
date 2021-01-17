@@ -72,8 +72,8 @@ func (t Task) Print(tw io.Writer) (err error) {
 	if !t.Finished.IsZero() {
 		finished = formatTime(t.Finished)
 	}
-	pColor := colors.ProjectColor(t.Project)
-	lColor := colors.LabelColor(t.Label)
+	pColor := colors.Color("projects", t.Project)
+	lColor := colors.Color("labels", t.Label)
 	_, err = fmt.Fprintf(tw, "\033[0m%d\t%s\t%s\t\033[%03dm \033[49m\t%s\t\033[%03dm \033[49m\t%s\t%s\033[0m\n", t.ID, created, finished, pColor, t.Project, lColor, t.Label, t.Name)
 	return
 }

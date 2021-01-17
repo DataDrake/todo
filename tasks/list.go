@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sort"
 	"text/tabwriter"
 )
@@ -54,8 +55,9 @@ func (l List) Swap(i, j int) {
 	l[i], l[j] = l[j], l[i]
 }
 
-// Load reads in all of the Tasks in a file, failing silently if the file does not exist
-func Load(path string) (l List, ok bool) {
+// load reads in all of the Tasks in a file, failing silently if the file does not exist
+func load(data, name string) (l List, ok bool) {
+	path := filepath.Join(data, name+".lst")
 	r, err := os.Open(path)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -84,7 +86,8 @@ func Load(path string) (l List, ok bool) {
 }
 
 // Save writes a List out to file
-func (l List) Save(path string) (ok bool) {
+func (l List) Save(data, name string) (ok bool) {
+	path := filepath.Join(data, name+".lst")
 	w, err := os.Create(path)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to open '%s', reason: %s\n", path, err)
