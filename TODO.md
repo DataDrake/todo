@@ -1,13 +1,22 @@
 # TODO
 
-- [x] Allow a color to be assigned to a Project
-- [x] Allow a color to be assigned to a Label
-- [x] Remove colors set to None for their maps
-- [ ] Edit task description (#3)
-- [ ] Allow remove to take multiple IDs (#3)
-- [ ] Filter list output by Task Specification (Project and/or Label)
-- [ ] Move a task from Completed back to the Backlog
-- [ ] Change Project and/or Label of existing Task
-- [ ] Add Flag for longer timestamps
-- [ ] Interactive Mode (SPOILERS)
-    - [ ] fsnotify
+ - [ ] Edit task description (#3)
+ - [ ] Allow remove to take multiple IDs (#3)
+
+# BACKLOG
+
+ - [ ] Filter list output by Task Specification
+ - [ ] Move a task from Completed to Backlog
+ - [ ] Modify project and/or label of existing Task
+ - [ ] Interactive Mode
+ - [ ] fsnotify for Interactive Mode
+ - [ ] Add Flag for longer timestamps
+
+# COMPLETED
+
+ - [x] Better text formatting for section headers in 'all'
+ - [x] Allow a color to be assigned to a Project
+ - [x] Allow a color to be assigned to a Label
+ - [x] Remove colors set to None from their maps
+ - [x] Generate TODO.md from tasks
+

@@ -78,6 +78,16 @@ func (t Task) Print(tw io.Writer) (err error) {
 	return
 }
 
+// Report prints out the task as Markdown
+func (t Task) Report(w io.Writer) (err error) {
+	if !t.Finished.IsZero() {
+		_, err = fmt.Fprintf(w, " - [x] %s\n", t.Name)
+	} else {
+		_, err = fmt.Fprintf(w, " - [ ] %s\n", t.Name)
+	}
+	return
+}
+
 // parse reads and validates a task specification
 func parse(args []string) (t Task, ok bool) {
 	if len(args) == 0 {

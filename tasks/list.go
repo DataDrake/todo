@@ -160,3 +160,13 @@ func (l List) remove(id int) (rest List, t Task, ok bool) {
 	rest = append(l[:i], l[i+1:]...)
 	return
 }
+
+// Report writes the list out in Markdown format
+func (l List) Report(w io.Writer) (err error) {
+	for _, t := range l {
+		if err = t.Report(w); err != nil {
+			return
+		}
+	}
+	return
+}

@@ -86,13 +86,18 @@ func All() (ok bool) {
 	if ok = TODO(); !ok {
 		return
 	}
-	fmt.Printf("\nBacklog:\n\n")
+	fmt.Printf("\n\033[100m BACKLOG \033[49m\n\n")
 	if ok = Backlog(); !ok {
 		return
 	}
-	fmt.Printf("\nCompleted:\n\n")
+	fmt.Printf("\n\033[100m COMPLETED \033[49m\n\n")
 	ok = Completed()
 	return
+}
+
+// Report generates a TODO.md for the current set of tasks
+func Report() bool {
+	return lists.Report()
 }
 
 // ResetCompleted permanently deletes all completed tasks

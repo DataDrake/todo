@@ -17,8 +17,10 @@
 package tasks
 
 import (
+	"fmt"
 	"github.com/DataDrake/todo/store"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -130,4 +132,24 @@ func (s Store) Return(id int) (ok bool) {
 func (s Store) Reset(name string) bool {
 	s[name] = make(List, 0)
 	return s.save(store.Path())
+}
+
+// Report generates a TODO.md for the current set of tasks
+func (s Store) Report() (ok bool) {
+	r, err := os.Create("TODO.md")
+	if err != nil {
+		fmt.Printf("Failed to open 'TODO.md', reason: %s\n", err)
+		return
+	}
+	defer r.Close()
+	for _, name := range []string{"todo", "backlog", "completed"} {
+		fmt.Fprintf(r, "# %s\n\n", strings.ToUpper(name))
+		if err = s[name].Report(r); err != nil {
+			fmt.Printf("Problem writing report for '%s': %s\n", name, err)
+			return
+		}
+		fmt.Fprintln(r)
+	}
+	ok = true
+	return
 }
