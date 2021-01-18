@@ -87,8 +87,8 @@ func (s Store) Add(t Task) (id int, ok bool) {
 
 // Claim moves a task from the backlog to the TODO list
 func (s Store) Claim(id int) (ok bool) {
-	var t Task
-	if s["backlog"], t, ok = s["backlog"].remove(id); ok {
+	if l, t, ok := s["backlog"].remove(id); ok {
+        s["backlog"] = l
 		s["todo"] = append(s["todo"], t)
 		return s.save(store.Path())
 	}
@@ -96,36 +96,37 @@ func (s Store) Claim(id int) (ok bool) {
 }
 
 // Done marks a task as completed
-func (s Store) Done(id int) (ok bool) {
-	var t Task
+func (s Store) Done(id int) bool {
 	for _, name := range []string{"todo", "backlog"} {
-		if s[name], t, ok = s[name].remove(id); ok {
+		if l, t, ok := s[name].remove(id); ok {
+            s[name] = l
 			t.Finished = time.Now()
 			s["completed"] = append(s["completed"], t)
 			return s.save(store.Path())
 		}
 	}
-	return
+	return false
 }
 
 // Remove deletes a task entirely
-func (s Store) Remove(id int) (ok bool) {
+func (s Store) Remove(id int) bool {
 	for name, list := range s {
-		if s[name], _, ok = list.remove(id); ok {
+		if l, _, ok := list.remove(id); ok {
+            s[name] = l
 			return s.save(store.Path())
 		}
 	}
-	return
+	return false
 }
 
 // Return moves a task from the TODO list back to the Backlog
-func (s Store) Return(id int) (ok bool) {
-	var t Task
-	if s["todo"], t, ok = s["todo"].remove(id); ok {
+func (s Store) Return(id int) bool {
+	if l, t, ok := s["todo"].remove(id); ok {
+        s["todo"] = l
 		s["backlog"] = append(s["backlog"], t)
 		return s.save(store.Path())
 	}
-	return
+	return false
 }
 
 // Reset permanently deletes all tasks in a list
