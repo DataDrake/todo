@@ -17,7 +17,7 @@
 package cli
 
 import (
-	"github.com/DataDrake/cli-ng/cmd"
+	"github.com/DataDrake/cli-ng/v2/cmd"
 )
 
 // Root forms the basis of this application
