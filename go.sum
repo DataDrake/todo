@@ -2,6 +2,8 @@ github.com/DataDrake/cli-ng v1.1.0 h1:HEMNTKdLYWYP2y8CHCxTi1qs6nS13GlRWyAecG9fQC
 github.com/DataDrake/cli-ng v1.1.0/go.mod h1:Q8waj7L8BdRhq6DP0ZlFrqtcwkzYHotewVRcfvRuseU=
 github.com/DataDrake/cli-ng/v2 v2.0.1 h1:UB4XkkuY2uzkBkDdj+EFmlDqeQzzwtbZI0bzo1AZluc=
 github.com/DataDrake/cli-ng/v2 v2.0.1/go.mod h1:bU9YaNNWWVq0eIdDsU3TCe9+7Jb398iBBoqee5EiKWQ=
+github.com/DataDrake/cli-ng/v2 v2.0.2 h1:7+25l25VmlERCE95glW6QKBUF13vxqAM2jasFiN02xQ=
+github.com/DataDrake/cli-ng/v2 v2.0.2/go.mod h1:bU9YaNNWWVq0eIdDsU3TCe9+7Jb398iBBoqee5EiKWQ=
 github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/mattn/kinako v0.0.0-20170717041458-332c0a7e205a/go.mod h1:CdTTBOYzS5E4mWS1N8NWP6AHI19MP0A2B18n3hLzRMk=

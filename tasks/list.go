@@ -106,7 +106,7 @@ func (l List) Save(data, name string) (ok bool) {
 }
 
 // Print writes a List out to console
-func (l List) Print() bool {
+func (l List) Print(project, label string, fullTime bool) bool {
 	if len(l) == 0 {
 		fmt.Println("No tasks yet.")
 		return true
@@ -119,7 +119,13 @@ func (l List) Print() bool {
 		return false
 	}
 	for _, t := range l {
-		if err := t.Print(tw); err != nil {
+		if len(project) > 0 && t.Project != project {
+			continue
+		}
+		if len(label) > 0 && t.Label != label {
+			continue
+		}
+		if err := t.Print(tw, fullTime); err != nil {
 			fmt.Fprintf(os.Stderr, "Error while printing: %s\n", err)
 			return false
 		}
@@ -128,7 +134,7 @@ func (l List) Print() bool {
 }
 
 // position finds the index of the Task with a matching ID or -1 if not found
-func (l List) position(id int) int {
+func (l List) position(id uint) int {
 	for i, t := range l {
 		if t.ID == id {
 			return i
@@ -138,7 +144,7 @@ func (l List) position(id int) int {
 }
 
 // Find searches for a task by ID, returning it and its index if found
-func (l List) find(id int) (t Task, index int, ok bool) {
+func (l List) find(id uint) (t Task, index int, ok bool) {
 	if index = l.position(id); index == -1 {
 		return
 	}
@@ -147,8 +153,35 @@ func (l List) find(id int) (t Task, index int, ok bool) {
 	return
 }
 
+// Modify updated a task in a List
+func (l List) modify(mod Task) (rest List, ok bool) {
+	orig, i, ok := l.find(mod.ID)
+	if !ok {
+		return
+	}
+	changed := false
+	if len(mod.Project) > 0 {
+		orig.Project = mod.Project
+		changed = true
+	}
+	if len(mod.Label) > 0 {
+		orig.Label = mod.Label
+		changed = true
+	}
+	if len(mod.Name) > 0 {
+		orig.Name = mod.Name
+		changed = true
+	}
+	if changed {
+		l[i] = orig
+		ok = true
+	}
+	rest = l
+	return
+}
+
 // Remove deletes a task from the list by ID
-func (l List) remove(id int) (rest List, t Task, ok bool) {
+func (l List) remove(id uint) (rest List, t Task, ok bool) {
 	t, i, ok := l.find(id)
 	if !ok {
 		return

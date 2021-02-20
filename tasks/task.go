@@ -27,7 +27,7 @@ import (
 
 // Task is a work item which is tracked by this program
 type Task struct {
-	ID       int
+	ID       uint
 	Created  time.Time
 	Finished time.Time
 	Project  string
@@ -66,11 +66,11 @@ func (t Task) Write(w io.Writer) (err error) {
 }
 
 // Print writes a task to console
-func (t Task) Print(tw io.Writer) (err error) {
-	created := formatTime(t.Created)
+func (t Task) Print(tw io.Writer, fullTime bool) (err error) {
+	created := formatTime(t.Created, fullTime)
 	var finished string
 	if !t.Finished.IsZero() {
-		finished = formatTime(t.Finished)
+		finished = formatTime(t.Finished, fullTime)
 	}
 	pColor := colors.Color("projects", t.Project)
 	lColor := colors.Color("labels", t.Label)
@@ -89,7 +89,7 @@ func (t Task) Report(w io.Writer) (err error) {
 }
 
 // parse reads and validates a task specification
-func parse(args []string) (t Task, ok bool) {
+func parse(args []string, skipName bool) (t Task, ok bool) {
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "No task specified. Example: @project :label \"Task Name\"")
 		return
@@ -108,7 +108,7 @@ func parse(args []string) (t Task, ok bool) {
 			t.Name = piece
 		}
 	}
-	if len(t.Name) == 0 {
+	if !skipName && len(t.Name) == 0 {
 		fmt.Fprintln(os.Stderr, "Task must have a Name.")
 		return
 	}

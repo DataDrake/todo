@@ -30,12 +30,21 @@ func init() {
 var Completed = cmd.Sub{
 	Name:  "completed",
 	Short: "Print current Completed list",
+	Flags: &CompletedFlags{},
 	Run:   CompletedRun,
+}
+
+// CompletedFlags contains the flags for the "completed" sub-command
+type CompletedFlags struct {
+	Project  string `short:"p" long:"project" desc:"Name of project to filter on"`
+	Label    string `short:"l" long:"label" desc:"Name of label to fiter on"`
+	FullTime bool   `short:"T" long:"full-time" desc:"Print both date and time for all tasks"`
 }
 
 // CompletedRun carries out the "completed" sub-command
 func CompletedRun(r *cmd.Root, s *cmd.Sub) {
-	if ok := tasks.Completed(); !ok {
+	flags := s.Flags.(*CompletedFlags)
+	if ok := tasks.Completed(flags.Project, flags.Label, flags.FullTime); !ok {
 		os.Exit(1)
 	}
 }

@@ -31,12 +31,21 @@ var List = cmd.Sub{
 	Name:  "list",
 	Alias: "ls",
 	Short: "Print current TODO list",
+	Flags: &ListFlags{},
 	Run:   ListRun,
+}
+
+// ListFlags contains the flags for the "list" sub-command
+type ListFlags struct {
+	Project  string `short:"p" long:"project" desc:"Name of project to filter on"`
+	Label    string `short:"l" long:"label" desc:"Name of label to fiter on"`
+	FullTime bool   `short:"T" long:"full-time" desc:"Print both date and time for all tasks"`
 }
 
 // ListRun carries out the "list" sub-command
 func ListRun(r *cmd.Root, s *cmd.Sub) {
-	if ok := tasks.TODO(); !ok {
+	flags := s.Flags.(*ListFlags)
+	if ok := tasks.TODO(flags.Project, flags.Label, flags.FullTime); !ok {
 		os.Exit(1)
 	}
 }

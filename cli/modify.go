@@ -23,29 +23,28 @@ import (
 )
 
 func init() {
-	cmd.Register(&Return)
+	cmd.Register(&Modify)
 }
 
-// Return moves a task from the TODO list to the backlog
-var Return = cmd.Sub{
-	Name:  "return",
-	Alias: ".",
-	Short: "Return a task to the Backlog from TODO",
-	Args:  &ReturnArgs{},
-	Run:   ReturnRun,
+// Modify deletes a task permanently
+var Modify = cmd.Sub{
+	Name:  "modify",
+	Alias: "mod",
+	Short: "Modify an existing task",
+	Args:  &ModifyArgs{},
+	Run:   ModifyRun,
 }
 
-// ReturnArgs specifies the ID of the task to return
-type ReturnArgs struct {
-	IDs []uint `desc:"ID(s) of Task(s) to return"`
+// ModifyArgs specifies the ID of the task to modify
+type ModifyArgs struct {
+	ID   uint     `desc:"ID of Task to modify"`
+	Spec []string `desc:"Specification for modifying the task (e.g. @new_project :new_label \"New Name\")"`
 }
 
-// ReturnRun carries out the "return" sub-command
-func ReturnRun(r *cmd.Root, s *cmd.Sub) {
-	args := s.Args.(*ReturnArgs)
-	for _, id := range args.IDs {
-		if ok := tasks.Return(id); !ok {
-			os.Exit(1)
-		}
+// ModifyRun carries out the "modify" sub-command
+func ModifyRun(r *cmd.Root, s *cmd.Sub) {
+	args := s.Args.(*ModifyArgs)
+	if ok := tasks.Modify(args.ID, args.Spec); !ok {
+		os.Exit(1)
 	}
 }

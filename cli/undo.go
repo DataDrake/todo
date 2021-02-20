@@ -23,28 +23,27 @@ import (
 )
 
 func init() {
-	cmd.Register(&Return)
+	cmd.Register(&Undo)
 }
 
-// Return moves a task from the TODO list to the backlog
-var Return = cmd.Sub{
-	Name:  "return",
-	Alias: ".",
-	Short: "Return a task to the Backlog from TODO",
-	Args:  &ReturnArgs{},
-	Run:   ReturnRun,
+// Undo moves a task from the TODO list to the backlog
+var Undo = cmd.Sub{
+	Name:  "undo",
+	Short: "Move a task from Completed to Backlog",
+	Args:  &UndoArgs{},
+	Run:   UndoRun,
 }
 
-// ReturnArgs specifies the ID of the task to return
-type ReturnArgs struct {
-	IDs []uint `desc:"ID(s) of Task(s) to return"`
+// UndoArgs specifies the ID of the task to undo
+type UndoArgs struct {
+	IDs []uint `desc:"ID(s) of Task(s) to undo"`
 }
 
-// ReturnRun carries out the "return" sub-command
-func ReturnRun(r *cmd.Root, s *cmd.Sub) {
-	args := s.Args.(*ReturnArgs)
+// UndoRun carries out the "undo" sub-command
+func UndoRun(r *cmd.Root, s *cmd.Sub) {
+	args := s.Args.(*UndoArgs)
 	for _, id := range args.IDs {
-		if ok := tasks.Return(id); !ok {
+		if ok := tasks.Undo(id); !ok {
 			os.Exit(1)
 		}
 	}

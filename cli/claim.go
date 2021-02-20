@@ -30,20 +30,22 @@ func init() {
 var Claim = cmd.Sub{
 	Name:  "claim",
 	Alias: "^",
-	Short: "Mark task claim",
+	Short: "Move a task from the Backlog to TODO",
 	Args:  &ClaimArgs{},
 	Run:   ClaimRun,
 }
 
 // ClaimArgs specifies the ID of the task to claim
 type ClaimArgs struct {
-	ID uint64 `desc:"ID of Task to mark as claim"`
+	IDs []uint `desc:"ID(s) of Task(s) to claim as TODO"`
 }
 
 // ClaimRun carries out the "claim" sub-command
 func ClaimRun(r *cmd.Root, s *cmd.Sub) {
 	args := s.Args.(*ClaimArgs)
-	if ok := tasks.Claim(int(args.ID)); !ok {
-		os.Exit(1)
+	for _, id := range args.IDs {
+		if ok := tasks.Claim(id); !ok {
+			os.Exit(1)
+		}
 	}
 }

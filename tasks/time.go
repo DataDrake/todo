@@ -21,11 +21,14 @@ import (
 )
 
 // formatTime handles string formatting for times which are printed to console
-func formatTime(t time.Time) string {
+func formatTime(t time.Time, fullTime bool) string {
 	now := time.Now()
 	timeFmt := "2006-01-02"
 	if t.Year() == now.Year() && t.Month() == now.Month() && t.Day() == now.Day() {
 		timeFmt = "15:04:05"
+	}
+	if fullTime {
+		timeFmt = "2006-01-02 15:04:05"
 	}
 	return t.Format(timeFmt)
 }

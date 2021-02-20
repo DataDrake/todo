@@ -58,7 +58,7 @@ func (s Store) save(data string) (ok bool) {
 }
 
 // nextID retrieves the next available ID, starting from 1
-func (s Store) nextID() (id int) {
+func (s Store) nextID() (id uint) {
 	id = 1
 	for {
 		found := false
@@ -76,7 +76,7 @@ func (s Store) nextID() (id int) {
 }
 
 // Add creates a new Task and places it in the backlog
-func (s Store) Add(t Task) (id int, ok bool) {
+func (s Store) Add(t Task) (id uint, ok bool) {
 	id = s.nextID()
 	t.ID = id
 	t.Created = time.Now()
@@ -86,9 +86,9 @@ func (s Store) Add(t Task) (id int, ok bool) {
 }
 
 // Claim moves a task from the backlog to the TODO list
-func (s Store) Claim(id int) (ok bool) {
+func (s Store) Claim(id uint) (ok bool) {
 	if l, t, ok := s["backlog"].remove(id); ok {
-        s["backlog"] = l
+		s["backlog"] = l
 		s["todo"] = append(s["todo"], t)
 		return s.save(store.Path())
 	}
@@ -96,10 +96,10 @@ func (s Store) Claim(id int) (ok bool) {
 }
 
 // Done marks a task as completed
-func (s Store) Done(id int) bool {
+func (s Store) Done(id uint) bool {
 	for _, name := range []string{"todo", "backlog"} {
 		if l, t, ok := s[name].remove(id); ok {
-            s[name] = l
+			s[name] = l
 			t.Finished = time.Now()
 			s["completed"] = append(s["completed"], t)
 			return s.save(store.Path())
@@ -108,11 +108,22 @@ func (s Store) Done(id int) bool {
 	return false
 }
 
+// Modify updates an existing Task
+func (s Store) Modify(t Task) (ok bool) {
+	for name, list := range s {
+		if l, ok := list.modify(t); ok {
+			s[name] = l
+			return s.save(store.Path())
+		}
+	}
+	return false
+}
+
 // Remove deletes a task entirely
-func (s Store) Remove(id int) bool {
+func (s Store) Remove(id uint) bool {
 	for name, list := range s {
 		if l, _, ok := list.remove(id); ok {
-            s[name] = l
+			s[name] = l
 			return s.save(store.Path())
 		}
 	}
@@ -120,9 +131,9 @@ func (s Store) Remove(id int) bool {
 }
 
 // Return moves a task from the TODO list back to the Backlog
-func (s Store) Return(id int) bool {
+func (s Store) Return(id uint) bool {
 	if l, t, ok := s["todo"].remove(id); ok {
-        s["todo"] = l
+		s["todo"] = l
 		s["backlog"] = append(s["backlog"], t)
 		return s.save(store.Path())
 	}
@@ -152,5 +163,16 @@ func (s Store) Report() (ok bool) {
 		fmt.Fprintln(r)
 	}
 	ok = true
+	return
+}
+
+// Undo moves a Task from Completed to the Backlog and resets its completion time
+func (s Store) Undo(id uint) (ok bool) {
+	if l, t, ok := s["completed"].remove(id); ok {
+		s["completed"] = l
+		t.Finished = time.Time{}
+		s["backlog"] = append(s["backlog"], t)
+		return s.save(store.Path())
+	}
 	return
 }

@@ -24,10 +24,10 @@ import (
 // Add creates a new Task and places it in the backlog
 func Add(args []string) (ok bool) {
 	var t Task
-	if t, ok = parse(args); !ok {
+	if t, ok = parse(args, false); !ok {
 		return
 	}
-	var id int
+	var id uint
 	if id, ok = lists.Add(t); ok {
 		fmt.Printf("Task %d created.\n", id)
 	}
@@ -35,7 +35,7 @@ func Add(args []string) (ok bool) {
 }
 
 // Claim moves a task from the backlog to the TODO list
-func Claim(id int) (ok bool) {
+func Claim(id uint) (ok bool) {
 	if ok = lists.Claim(id); !ok {
 		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
@@ -43,15 +43,28 @@ func Claim(id int) (ok bool) {
 }
 
 // Done marks a task as completed
-func Done(id int) (ok bool) {
+func Done(id uint) (ok bool) {
 	if ok = lists.Done(id); !ok {
 		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
 	return
 }
 
+// Modify alters an existing task
+func Modify(id uint, args []string) (ok bool) {
+	var t Task
+	if t, ok = parse(args, true); !ok {
+		return
+	}
+	t.ID = id
+	if ok = lists.Modify(t); ok {
+		fmt.Printf("Task %d modified.\n", id)
+	}
+	return
+}
+
 // Remove deletes a task entirely
-func Remove(id int) (ok bool) {
+func Remove(id uint) (ok bool) {
 	if ok = lists.Remove(id); !ok {
 		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
@@ -59,39 +72,47 @@ func Remove(id int) (ok bool) {
 }
 
 // Return moves a task from the TODO list back to the Backlog
-func Return(id int) (ok bool) {
+func Return(id uint) (ok bool) {
 	if ok = lists.Return(id); !ok {
 		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
 	}
 	return
 }
 
+// Undo moves a task from Completed to the Backlog
+func Undo(id uint) (ok bool) {
+	if ok = lists.Undo(id); !ok {
+		fmt.Fprintf(os.Stderr, "Failed to find task '%d'\n", id)
+	}
+	return
+}
+
 // TODO prints the TODO list
-func TODO() bool {
-	return lists["todo"].Print()
+func TODO(project, label string, fullTime bool) bool {
+	return lists["todo"].Print(project, label, fullTime)
 }
 
 // Backlog prints the Backlog
-func Backlog() bool {
-	return lists["backlog"].Print()
+func Backlog(project, label string, fullTime bool) bool {
+	return lists["backlog"].Print(project, label, fullTime)
 }
 
 // Completed prints the Completed tasks
-func Completed() bool {
-	return lists["completed"].Print()
+func Completed(project, label string, fullTime bool) bool {
+	return lists["completed"].Print(project, label, fullTime)
 }
 
 // All prints every tracked task
-func All() (ok bool) {
-	if ok = TODO(); !ok {
+func All(project, label string, fullTime bool) (ok bool) {
+	if ok = TODO(project, label, fullTime); !ok {
 		return
 	}
 	fmt.Printf("\n\033[100m BACKLOG \033[49m\n\n")
-	if ok = Backlog(); !ok {
+	if ok = Backlog(project, label, fullTime); !ok {
 		return
 	}
 	fmt.Printf("\n\033[100m COMPLETED \033[49m\n\n")
-	ok = Completed()
+	ok = Completed(project, label, fullTime)
 	return
 }
 

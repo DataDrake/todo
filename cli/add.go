@@ -37,7 +37,7 @@ var Add = cmd.Sub{
 
 // AddArgs accepts a new task specification
 type AddArgs struct {
-	Spec []string `desc:"specification for a new task (e.g. @project :label \"New Task\""`
+	Spec []string `desc:"Specification for a new task (e.g. @project :label \"New Task\")"`
 }
 
 // AddRun carries out the "add" sub-command

@@ -36,13 +36,15 @@ var Remove = cmd.Sub{
 
 // RemoveArgs specifies the ID of the task to remove
 type RemoveArgs struct {
-	ID uint64 `desc:"ID of Task to remove"`
+	IDs []uint `desc:"ID(s) of Task(s) to remove"`
 }
 
 // RemoveRun carries out the "remove" sub-command
 func RemoveRun(r *cmd.Root, s *cmd.Sub) {
 	args := s.Args.(*RemoveArgs)
-	if ok := tasks.Remove(int(args.ID)); !ok {
-		os.Exit(1)
+	for _, id := range args.IDs {
+		if ok := tasks.Remove(id); !ok {
+			os.Exit(1)
+		}
 	}
 }

@@ -37,13 +37,15 @@ var Done = cmd.Sub{
 
 // DoneArgs specifies the ID of the task to mark done
 type DoneArgs struct {
-	ID uint64 `desc:"ID of Task to mark as done"`
+	IDs []uint `desc:"ID(s) of Task(s) to mark as done"`
 }
 
 // DoneRun carries out the "done" sub-command
 func DoneRun(r *cmd.Root, s *cmd.Sub) {
 	args := s.Args.(*DoneArgs)
-	if ok := tasks.Done(int(args.ID)); !ok {
-		os.Exit(1)
+	for _, id := range args.IDs {
+		if ok := tasks.Done(id); !ok {
+			os.Exit(1)
+		}
 	}
 }

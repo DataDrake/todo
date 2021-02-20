@@ -30,12 +30,21 @@ func init() {
 var All = cmd.Sub{
 	Name:  "all",
 	Short: "Print all tasks",
+	Flags: &AllFlags{},
 	Run:   AllRun,
 }
 
-// AllRun carries out the "report" sub-command
+// AllFlags contains the flags for the "all" sub-command
+type AllFlags struct {
+	Project  string `short:"p" long:"project" desc:"Name of project to filter on"`
+	Label    string `short:"l" long:"label" desc:"Name of label to fiter on"`
+	FullTime bool   `short:"T" long:"full-time" desc:"Print both date and time for all tasks"`
+}
+
+// AllRun carries out the "all" sub-command
 func AllRun(r *cmd.Root, s *cmd.Sub) {
-	if ok := tasks.All(); !ok {
+	flags := s.Flags.(*AllFlags)
+	if ok := tasks.All(flags.Project, flags.Label, flags.FullTime); !ok {
 		os.Exit(1)
 	}
 }
