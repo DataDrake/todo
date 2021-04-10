@@ -18,6 +18,8 @@ package colors
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 )
 
 // Names is a list of the supported colors
@@ -66,5 +68,16 @@ var Codes = map[string]int{
 func Print() {
 	for _, name := range Names {
 		fmt.Printf("\033[%dm  \033[49m %s\n", Codes[name], name)
+	}
+	var keys []string
+	for key := range configs {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		fmt.Printf("\n\033[100m %s \033[49m\n\n", strings.ToUpper(key))
+		for name, color := range configs[key] {
+			fmt.Printf("\033[%dm  \033[49m %s\n", Codes[color], name)
+		}
 	}
 }

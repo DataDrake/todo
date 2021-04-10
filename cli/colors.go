@@ -28,7 +28,7 @@ func init() {
 // Colors prints the supported color codes
 var Colors = cmd.Sub{
 	Name:  "colors",
-	Short: "List available colors",
+	Short: "List available colors and already configured colors",
 	Run:   ColorsRun,
 }
 
